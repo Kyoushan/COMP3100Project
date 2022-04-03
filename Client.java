@@ -3,70 +3,81 @@ import java.net.*;
 public class Client{
 
 	public static String attributeGetter(String s){
-		String s2= s.substring(13,24);
-		return s2;
+		String[] s2= s.split(" ");
+		String s3 = s2[4] + " " + s2[5] + " " + s2[6];
+		return s3;
+	}
+
+	public static String findServer(String a, String b){
+		String[] s1=a.split(" ");
+		String[] s2=b.split(" ");
+		if(Integer.parseInt(s1[4]) > Integer.parseInt(s2[4])){
+			return s1[0] + " " + s1[1];
+
+		}else
+			return s2[0] + " " + s2[1];
+		
 	}
 	
-public static void main(String[]args){
+	public static void main(String[]args){
 	try{
 	Socket s= new Socket("127.0.0.1", 50000);
 	DataOutputStream dout=new DataOutputStream(s.getOutputStream());
+  	BufferedReader bin = new BufferedReader(new InputStreamReader(s.getInputStream()));
 	dout.write(("HELO\n").getBytes());
 	dout.flush();
-  	BufferedReader bin = new BufferedReader(new InputStreamReader(s.getInputStream()));
         String str=(String)bin.readLine();
 	System.out.println(str);
 
-	DataOutputStream dout2=new DataOutputStream(s.getOutputStream());
-        dout2.write(("AUTHAngus\n").getBytes());
-	dout2.flush();
+        dout.write(("AUTHAngus\n").getBytes());
+	dout.flush();
 
-	BufferedReader bin2 = new BufferedReader(new InputStreamReader(s.getInputStream()));
-        String str2=(String)bin2.readLine();
+        String str2=(String)bin.readLine();
 	System.out.println(str2);
 
+	do{
+        dout.write(("REDY\n").getBytes());
+		dout.flush();
+	
+        String str3=(String)bin.readLine();
+		System.out.println(str3);
 
-	DataOutputStream dout3=new DataOutputStream(s.getOutputStream());
-        dout3.write(("REDY\n").getBytes());
-	dout3.flush();
+		String[] jobs = str3.split(" ");
+		int jobID = Integer.parseInt(jobs[2]);
 
-	BufferedReader bin3 = new BufferedReader(new InputStreamReader(s.getInputStream()));
-        String str3=(String)bin3.readLine();
-	System.out.println(str3);
+        dout.write(("GETS Capable "+ attributeGetter(str3) +"\n").getBytes());
+		dout.flush();
 
-        DataOutputStream dout4=new DataOutputStream(s.getOutputStream());
-        dout4.write(("GETS Capable"+ attributeGetter(str3) +"\n").getBytes());
-	dout4.flush();
-
-	BufferedReader bin4 = new BufferedReader(new InputStreamReader(s.getInputStream()));
-        String str4=(String)bin4.readLine();
+        String str4=(String)bin.readLine();
         System.out.println(str4);
 
-        DataOutputStream dout5=new DataOutputStream(s.getOutputStream());
-        dout5.write(("OK\n").getBytes());
-	dout5.flush();
+		String[] data = str4.split(" ");
+		int nRecs = Integer.parseInt(data[1]);
 
+        dout.write(("OK\n").getBytes());
+		dout.flush();
 
-        BufferedReader bin6 = new BufferedReader(new InputStreamReader(s.getInputStream()));
-        String str6=(String)bin6.readLine();
-        System.out.println(str6);
+		String largestServer= new String();
+		String[] serverRecs = new String[nRecs];
+		for(int i =0; i< nRecs; i++){
+			serverRecs[i] = bin.readLine();
+        	System.out.println(serverRecs[i]);
+			if (i>1){
+				largestServer=findServer(serverRecs[i-1], serverRecs[i]);
+				}
+        	}
 
-        DataOutputStream dout10=new DataOutputStream(s.getOutputStream());
-        dout10.write(("OK\n").getBytes());
-	dout10.flush();
+    	dout.write(("OK\n").getBytes());
+		dout.flush();
 
+//		if(jobs[0]=="JOBN"){
+       		 dout.write(("SCHD " + jobID + " " + largestServer + "\n").getBytes());
+       		 dout.flush();
+//		}
+}while(bin.readLine() != "NONE");
 
-        DataOutputStream dout11=new DataOutputStream(s.getOutputStream());
-        dout11.write(("OK\n").getBytes());
-	dout11.flush();
-
-        DataOutputStream dout6=new DataOutputStream(s.getOutputStream());
-        dout6.write(("SCHD super-silk 3 124\n").getBytes());
-        dout6.flush();
-
-//        DataOutputStream dout6=new DataOutputStream(s.getOutputStream());
-//        dout6.write(("QUIT\n").getBytes());
-//	dout6.flush();
+        dout.write(("QUIT\n").getBytes());
+		dout.flush();
 	
 	s.close();
 	System.out.println("client disconnected...");
