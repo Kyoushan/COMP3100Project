@@ -1,3 +1,5 @@
+//Class to specify the attributes of the server gathered from the data
+//provided by ds-sim
 public class Server {
     String servType;
     int servID;
