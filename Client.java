@@ -6,7 +6,7 @@ import java.net.Socket;
 public class Client{
 
 	static Socket s;
-	static BufferedReader bin;
+	static BufferedReader bin;	
 	static DataOutputStream dout;
 
 	static Server[] serverRecs;
@@ -26,8 +26,8 @@ public class Client{
 		dout.write(("HELO\n").getBytes());
         String str=(String)bin.readLine();
 		System.out.println(str);
-        dout.write(("AUTH" + System.getProperty("user.name") + "\n").getBytes());
-        str=(String)bin.readLine();
+        dout.write(("AUTH " + System.getProperty("user.name") + "\n").getBytes());        
+		str=(String)bin.readLine();
 		System.out.println(str);
 
 		while(!output.equals("NONE")){
@@ -40,7 +40,22 @@ public class Client{
 			//TODO: Make the selection of the algorithm
 			//based on command-line input
 			if(serverRecs == null){
+				dout.write(("GETS Capable " + attributeGetter(output) +"\n").getBytes());
+				output=(String)bin.readLine();
+				System.out.println(output);
+				
+				data = output.split(" ");
+				nRecs = Integer.parseInt(data[1]);
+			
+				serverRecs = new Server[nRecs];
+				dout.write(("OK\n").getBytes());
+
 				LRR.algorthim();
+
+
+				dout.write(("OK\n").getBytes());
+				output = (String) bin.readLine();
+				System.out.println(output);
 			}
 			if(jobs[0].equals("JOBN")){
 				LRR.printer();
