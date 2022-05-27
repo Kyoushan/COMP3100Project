@@ -37,10 +37,9 @@ public class Client{
 			jobs = output.split(" ");
 
 
-			//TODO: Make the selection of the algorithm
-			//based on command-line input
+			
 			if(serverRecs == null){
-				dout.write(("GETS Capable " + attributeGetter(output) +"\n").getBytes());
+				dout.write(("GETS Avail " + attributeGetter(output) +"\n").getBytes());
 				output=(String)bin.readLine();
 				System.out.println(output);
 				
@@ -50,7 +49,7 @@ public class Client{
 				serverRecs = new Server[nRecs];
 				dout.write(("OK\n").getBytes());
 
-				LRR.algorthim();
+				LRR.algorithm();
 
 
 				dout.write(("OK\n").getBytes());

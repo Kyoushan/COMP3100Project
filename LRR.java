@@ -7,7 +7,7 @@ public class LRR extends Client{
 	static int sLimit;
 
 //Main LRR algorithm function
-public static void algorthim(){
+public static void algorithm(){
     try{
     	for(int i =0; i< nRecs; i++){
 	        output = (String) bin.readLine();
@@ -36,7 +36,8 @@ public static void printer(){
                      jobIndex % sLimit + "\n").getBytes());
         output = (String) bin.readLine();
         System.out.println(output);
+		jobIndex++;
+
     } catch (IOException e) {System.out.println(e);}
-     jobIndex++;
  }
 }
